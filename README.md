@@ -9,6 +9,7 @@ I have a few websites bookmarked on my Firestick that I occasionally use to watc
 - **app.py** - The backend code that powers the search functionality. It uses Flask to create an API endpoint, which receives the search query from `webpage.html`. This script is configured to search specific movie streaming websites for the given query, parse the HTML responses, and extract the URLs of the search results. It then sends these results back to `webpage.html` to display.
 
 - **favicon.ico** - A simple favicon to make the website look a little more polished in the browser. It’s not necessary but adds a nice touch.
+- **logo.png** - it is what it is
 
 ## How It Works
 
