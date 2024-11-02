@@ -9,7 +9,24 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: white; /* Keep the background color white */
+            position: relative;
         }
+
+        /* Overlay for background image */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('logo.png') no-repeat center center;
+            background-size: 500px; /* Adjust this size as needed */
+            opacity: 0.5;
+            z-index: -1;
+        }
+
         #search-results {
             margin-top: 20px;
         }
@@ -24,6 +41,12 @@
         .divider {
             margin: 20px 0;
             border-top: 1px solid #ccc;
+            width: 20%;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -33,25 +56,30 @@
     <button onclick="searchMovies()">Search</button>
 
     <div id="search-results">
-        <!-- Search results will appear here -->
+        <!-- Search results or error message will appear here -->
     </div>
 
     <script>
         // JavaScript function to handle search
         async function searchMovies() {
             const query = document.getElementById('query').value.trim();
+            const resultsContainer = document.getElementById('search-results');
+
+            // Clear any existing results or messages
+            resultsContainer.innerHTML = '';
+
+            // Check if query is empty
             if (!query) {
-                alert("Please enter a search query");
+                const errorMessage = document.createElement('div');
+                errorMessage.textContent = "Search cannot be empty";
+                errorMessage.classList.add('error-message');
+                resultsContainer.appendChild(errorMessage);
                 return;
             }
 
             // Fetch search results from the server
             const response = await fetch(`http://192.168.0.X:5000/search?query=${encodeURIComponent(query)}`);
             const results = await response.json();
-
-            // Clear any existing results
-            const resultsContainer = document.getElementById('search-results');
-            resultsContainer.innerHTML = '';
 
             // Display results
             results.forEach((site, index) => {
