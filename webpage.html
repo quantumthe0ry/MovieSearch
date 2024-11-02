@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Search Aggregator</title>
+    <style>
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #search-results {
+            margin-top: 20px;
+        }
+        .result {
+            margin-bottom: 10px;
+        }
+        .site-name {
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+        .divider {
+            margin: 20px 0;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Movie Search</h1>
+    <input type="text" id="query" placeholder="Enter movie name" />
+    <button onclick="searchMovies()">Search</button>
+
+    <div id="search-results">
+        <!-- Search results will appear here -->
+    </div>
+
+    <script>
+        // JavaScript function to handle search
+        async function searchMovies() {
+            const query = document.getElementById('query').value.trim();
+            if (!query) {
+                alert("Please enter a search query");
+                return;
+            }
+
+            // Fetch search results from the server
+            const response = await fetch(`http://192.168.0.X:5000/search?query=${encodeURIComponent(query)}`);
+            const results = await response.json();
+
+            // Clear any existing results
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = '';
+
+            // Display results
+            results.forEach((site, index) => {
+                // Display the site base URL as bold text, not as a link
+                const siteName = document.createElement('div');
+                siteName.textContent = site.siteName;
+                siteName.classList.add('site-name');
+                resultsContainer.appendChild(siteName);
+
+                // Display each search result from the site
+                const siteResults = document.createElement('div');
+                siteResults.style.marginLeft = '20px';
+                
+                site.results.forEach(result => {
+                    const link = document.createElement('a');
+                    link.href = result.url;
+                    link.textContent = result.title;
+                    link.classList.add('result');
+                    link.target = '_blank';
+                    siteResults.appendChild(link);
+                    siteResults.appendChild(document.createElement('br'));
+                });
+
+                resultsContainer.appendChild(siteResults);
+
+                // Add a divider after each site's results except the last one
+                if (index < results.length - 1) {
+                    const divider = document.createElement('div');
+                    divider.classList.add('divider');
+                    resultsContainer.appendChild(divider);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
