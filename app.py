@@ -10,8 +10,10 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 SEARCH_URLS = {
     "StreamLord": {"url": "https://streamlord.to/search/{query}", "base": "https://streamlord.to"},
     "123Movies": {"url": "https://w0123movies.com/search/{query}", "base": "https://w0123movies.com"},
-    "SolarMovie": {"url": "https://www2.solarmovie.cr/search/{query}/", "base": "https://www2.solarmovie.cr"},
-    "123MoviesMe": {"url": "https://www1.123moviesme.online/?s={query}", "base": "https://www1.123moviesme.online"}
+    "SolarMovie": {"url": "https://solarmovie.vip/movie/search/{query}/", "base": "https://solarmovie.vip"},
+    "123MoviesMe": {"url": "https://www1.123moviesme.online/?s={query}", "base": "https://www1.123moviesme.online"},
+    "bMovies":{"url": "https://ww.bmovies.vip/movie/search/{query}", "base": "https://bmovies.vip"},
+    "Putlocker":{"url": "https://ww4.putlocker.vip/movie/search/{query}", "base": "https://ww4.putlocker.vip"}
 }
 
 @app.route('/search', methods=['GET'])
@@ -56,8 +58,8 @@ def search():
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
         results = []
-        for item in soup.select('.ml-item a.ml-mask'):
-            title = item.find('h2').text.strip()
+        for item in soup.select('.ml-item .ml-mask'):
+            title = item['title'].strip() 
             link = SEARCH_URLS["SolarMovie"]["base"] + item['href']
             results.append({"title": title, "url": link})
         all_results.append({"siteName": SEARCH_URLS["SolarMovie"]["base"], "results": results})
@@ -77,6 +79,34 @@ def search():
         all_results.append({"siteName": SEARCH_URLS["123MoviesMe"]["base"], "results": results})
     except Exception as e:
         all_results.append({"siteName": SEARCH_URLS["123MoviesMe"]["base"], "results": [], "error": str(e)})
+
+    # bMovies Parsing
+    try:
+        response = requests.get(SEARCH_URLS["bMovies"]["url"].format(query=query))
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        results = []
+        for item in soup.select('.ml-item .ml-mask'):
+            title = item['title'].strip() 
+            link = SEARCH_URLS["bMovies"]["base"] + item['href']
+            results.append({"title": title, "url": link})
+        all_results.append({"siteName": SEARCH_URLS["bMovies"]["base"], "results": results})
+    except Exception as e:
+        all_results.append({"siteName": SEARCH_URLS["bMovies"]["base"], "results": [], "error": str(e)})
+
+    # Putlocker Parsing
+    try:
+        response = requests.get(SEARCH_URLS["Putlocker"]["url"].format(query=query))
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        results = []
+        for item in soup.select('.ml-item .ml-mask'):
+            title = item['title'].strip() 
+            link = SEARCH_URLS["Putlocker"]["base"] + item['href']
+            results.append({"title": title, "url": link})
+        all_results.append({"siteName": SEARCH_URLS["Putlocker"]["base"], "results": results})
+    except Exception as e:
+        all_results.append({"siteName": SEARCH_URLS["Putlocker"]["base"], "results": [], "error": str(e)})
 
     # Return all results as JSON
     print(all_results)  # Log results for debugging purposes
