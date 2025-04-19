@@ -2,6 +2,8 @@
 
 I have a few websites bookmarked on my Firestick that I occasionally use to watch movies and series. It’s tedious to visit each site individually to search for a specific title, so I created this simple website to search all of them at once. This is a personal project to automate the process and save time. I’m not a developer—just someone who got bored and decided to make life a little easier!
 
+- **Update** - My dog ate my firestick remote making it difficult to type text, so I wanted a way to search for movies/series without a remote. I added some routes to app.py, added a polling functionality to webpage.html, and created remote.html. Now when the app is running, you can use remote.html from a computer or mobile device to send queries to webpage.html instead of having to type them manually.
+
 ## What's Included
 
 - **webpage.html** - A straightforward HTML page with a search input. When you enter a movie or series title and hit search, it sends the query to the backend, which then queries the specified websites and displays the results. The results from each site are organized and separated by dividers for easy viewing. In addition to manual input, the page also checks for remote search queries sent from other devices (like a phone or computer) once per minute. If a remote query is found, it is automatically populated into the search field and executed — allowing full remote control without using the TV remote.
