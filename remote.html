@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Send to TV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background: #f8f8f8;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .status {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Send Movie Query to TV</h2>
+    <input id="movieInput" type="text" placeholder="Enter movie name..." />
+    <br>
+    <button onclick="sendToTV()">Send</button>
+    <div class="status" id="status"></div>
+
+    <script>
+        async function sendToTV() {
+            const query = document.getElementById('movieInput').value.trim();
+            const status = document.getElementById('status');
+
+            if (!query) {
+                status.textContent = "Movie title can't be empty.";
+                status.style.color = "red";
+                return;
+            }
+
+            try {
+                const res = await fetch('http://192.168.0.X:5000/remote-query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+
+                const result = await res.json();
+                if (res.ok) {
+                    status.textContent = `✅ Sent: "${query}"`;
+                    status.style.color = "green";
+                } else {
+                    status.textContent = `❌ ${result.message}`;
+                    status.style.color = "red";
+                }
+            } catch (err) {
+                status.textContent = "❌ Failed to contact server.";
+                status.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
