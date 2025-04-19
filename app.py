@@ -15,6 +15,24 @@ SEARCH_URLS = {
     "Putlocker": {"url": "https://ww4.putlocker.vip/movie/search/{query}", "base": "https://ww4.putlocker.vip"}
 }
 
+# Global store for one-time remote query
+pending_query = {"value": None}
+
+@app.route('/remote-query', methods=['POST'])
+def set_remote_query():
+    data = request.get_json()
+    query = data.get('query', '').strip()
+    if query:
+        pending_query["value"] = query
+        return jsonify({"status": "OK", "message": f"Query set to: {query}"})
+    return jsonify({"status": "error", "message": "No query provided"}), 400
+
+@app.route('/get-remote-query', methods=['GET'])
+def get_remote_query():
+    query = pending_query["value"]
+    pending_query["value"] = None  # one-time use
+    return jsonify({"query": query})
+
 @app.route('/search', methods=['GET'])
 def search():
     query = request.args.get('query', '').replace(' ', '+')
