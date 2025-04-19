@@ -61,7 +61,7 @@ Additionally, it includes support for remote search control via remote.html, all
    python3 -m http.server 80
    ```
 5. Open a browser and navigate to http://192.168.0.X/webpage.html (Replace the IP with the IP running the server)
-6. Optional use: remote.html. Once webpage.html is loaded, you can use remote.html to send remote queries to the webpage. This way you can use your mobile device or computer to type queries instead of a remote.
+6. Optional use: remote.html. Once webpage.html is loaded, you can use remote.html to send remote queries to the webpage. This way you can use your mobile device or computer to type queries instead of a remote. Make sure to edit line 52 to reflect the correct IP address.
 
 # Limitations
 Some websites may have CAPTCHA or anti-bot measures that prevent automated querying. One of the sites I use initiates a Cloudflare human check for each search query. I initially tried to use Selenium to bypass this but was ultimately not successful. It may be possible, but again, I'm not a developer, so it's a little over my head. Therefore, I chose to exclude that site.
