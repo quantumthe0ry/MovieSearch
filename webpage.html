@@ -60,15 +60,13 @@
     </div>
 
     <script>
-        // JavaScript function to handle search
         async function searchMovies() {
             const query = document.getElementById('query').value.trim();
             const resultsContainer = document.getElementById('search-results');
-
+    
             // Clear any existing results or messages
             resultsContainer.innerHTML = '';
-
-            // Check if query is empty
+    
             if (!query) {
                 const errorMessage = document.createElement('div');
                 errorMessage.textContent = "Search cannot be empty";
@@ -76,23 +74,19 @@
                 resultsContainer.appendChild(errorMessage);
                 return;
             }
-
-            // Fetch search results from the server
+    
             const response = await fetch(`http://192.168.0.X:5000/search?query=${encodeURIComponent(query)}`);
             const results = await response.json();
-
-            // Display results
+    
             results.forEach((site, index) => {
-                // Display the site base URL as bold text, not as a link
                 const siteName = document.createElement('div');
                 siteName.textContent = site.siteName;
                 siteName.classList.add('site-name');
                 resultsContainer.appendChild(siteName);
-
-                // Display each search result from the site
+    
                 const siteResults = document.createElement('div');
                 siteResults.style.marginLeft = '20px';
-                
+    
                 site.results.forEach(result => {
                     const link = document.createElement('a');
                     link.href = result.url;
@@ -102,10 +96,9 @@
                     siteResults.appendChild(link);
                     siteResults.appendChild(document.createElement('br'));
                 });
-
+    
                 resultsContainer.appendChild(siteResults);
-
-                // Add a divider after each site's results except the last one
+    
                 if (index < results.length - 1) {
                     const divider = document.createElement('div');
                     divider.classList.add('divider');
@@ -113,6 +106,28 @@
                 }
             });
         }
+    
+        let lastQuery = "";
+    
+        async function pollForRemoteQuery() {
+            try {
+                const res = await fetch('http://192.168.0.X:5000/get-remote-query');
+                const data = await res.json();
+                if (data.query && data.query !== lastQuery) {
+                    lastQuery = data.query;
+                    document.getElementById('query').value = data.query;
+                    searchMovies();
+                }
+            } catch (err) {
+                console.error("Remote query fetch failed:", err);
+            }
+        }
+    
+        window.onload = function () {
+            pollForRemoteQuery();                  // initial check on load
+            setInterval(pollForRemoteQuery, 60000); // repeat every 60 seconds
+        };
     </script>
+    
 </body>
 </html>
